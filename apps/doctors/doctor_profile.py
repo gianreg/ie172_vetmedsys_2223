@@ -119,7 +119,6 @@ def doctorprof_loaddropdown(pathname, search):
         Output('doctorprof_modal', 'is_open'),
         Output('doctorprof_feedback_message', 'children'),
         Output('doctorprof_closebtn', 'href'),
-
     ],
     [
         Input('doctorprof_submitbtn', 'n_clicks'),
@@ -244,4 +243,4 @@ def movieprofile_loadprofile(timestamp, toload, search):
         return [name, specialty]
  
     else:
-        raise PreventUpdate
+        raise 

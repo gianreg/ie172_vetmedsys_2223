@@ -27,12 +27,10 @@ layout = html.Div(
                                 html.Hr(),
                                 dbc.Row(
                                     [
-                                        dbc.Label("Search Transaction ID", width=2),
+                                        dbc.Label("Search Transaction Date", width=2),
                                         dbc.Col(
-                                            dbc.Input(
-                                                type='text',
-                                                id='trans_id_filter',
-                                                placeholder='Enter Transaction ID'
+                                            dcc.DatePickerSingle(
+                                                id='trans_date_filter',
                                             ),
                                             width=6,
                                         ),
@@ -51,3 +49,47 @@ layout = html.Div(
         )
     ]
 )
+@app.callback(
+    [
+        Output('transactions_translist', 'children')
+    ],
+    [
+        Input('url', 'pathname'),
+        Input('trans_date_filter', 'value'),
+    ]
+ )
+def updateservicelist(pathname, searchterm):
+    if pathname == '/transactions':
+        sql = """select trans_date, pet_id, doctor_id, service_id, inv_id, inv_qty_used, trans_paid, trans_change
+            from transactions
+            where not trans_delete_ind
+        """
+        val = []
+        colnames = ['Date', 'Pet', 'Doctor-In-Charge','Service Availed','Inventory Used','Inventory Quantity Used','Amount Paid','Change']
+        if searchterm:
+            sql += "AND trans_date ILIKE %s"
+            val += [f"%{searchterm}%"]
+        
+        transactions = db.querydatafromdatabase(sql, val, colnames)
+        if transactions.shape[0]:
+            buttons = []
+            for transid in transactions['ID']:
+                buttons += [
+                    html.Div(
+                        dbc.Button('Edit/Delete', href=f"/services/services_profile?mode=edit&id={transid}",
+                                    size='sm', color='warning'),
+                        style={'text-align': 'center'}
+                    )
+                ]
+            transactions['Edit/Delete Record'] = buttons
+
+            transactions.drop('ID', axis=1, inplace=True)
+
+            table = dbc.Table.from_dataframe(transactions, striped = True, bordered = True, hover = True, size = 'sm')
+            return [table]
+
+        else:
+            return ["There are no records that match the search term."]
+    
+    else:
+        raise PreventUpdate
