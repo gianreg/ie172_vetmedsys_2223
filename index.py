@@ -12,6 +12,7 @@ from apps import commonmodules as cm
 from apps import home
 from apps.pets import pets_home, pets_profile
 from apps.owners import owners_home, owners_profile
+from apps.transactions import trans_home, trans_new
 
 CONTENT_STYLE = {
     "margin-left": "1em",
@@ -45,6 +46,10 @@ def displaypage (pathname):
     if eventid == 'url':
         if pathname in ['/', '/home']:  
                 returnlayout = home.layout
+        elif pathname == '/transactions':
+                returnlayout = trans_home.layout
+        elif pathname == '/transactions/trans_new':
+                returnlayout = trans_new.layout
         elif pathname == '/pets':
                 returnlayout = pets_home.layout
         elif pathname == '/pets/pets_profile':
@@ -67,3 +72,5 @@ def displaypage (pathname):
 if __name__ == '__main__':
     webbrowser.open('http://127.0.0.1:8050/', new=0, autoraise=True)
     app.run_server(debug=False)
+
+    
