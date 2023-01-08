@@ -10,7 +10,7 @@ from apps import dbconnect as db
 
 layout = html.Div(
     [
-        html.H2('Enter the details'),
+        html.H2('Register New User'),
         html.Hr(),
         dbc.Alert('Please supply details.', color="danger", id='signup_alert',
                   is_open=False),
