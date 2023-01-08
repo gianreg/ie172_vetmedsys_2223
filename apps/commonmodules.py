@@ -24,6 +24,7 @@ navbar = dbc.Navbar(
         dbc.NavLink("Doctors", href="/doctors", style=navlink_style),
         dbc.NavLink("Services", href="/services", style=navlink_style),
         dbc.NavLink("Inventory", href="/inventory", style=navlink_style),
+        dbc.NavLink("Logout", href="/logout", style=navlink_style),
     ],
     dark=True,
     color='dark'

@@ -15,7 +15,7 @@ from apps.owners import owners_home, owners_profile
 from apps.transactions import trans_home, trans_new
 from apps.services import services_home, services_profile
 from apps.doctors import doctor_profile, doctors_home
-
+from apps import login, signup
 
 CONTENT_STYLE = {
     "margin-left": "1em",
@@ -25,61 +25,105 @@ CONTENT_STYLE = {
 
 app.layout = html.Div(
     [
+        
         dcc.Location(id='url', refresh=True),
-        cm.navbar,
+        
+        
+        
+        dcc.Store(id='sessionlogout', data=False, storage_type='session'),
+        
+        
+        dcc.Store(id='currentuserid', data=-1, storage_type='session'),
+        
+        
+        dcc.Store(id='currentrole', data=-1, storage_type='session'),
+        
+        html.Div(
+            cm.navbar,
+            id='navbar_div'
+        ),
+        
+        
         html.Div(id='page-content', style=CONTENT_STYLE),
     ]
 )
 
+
+
 @app.callback(
     [
-        Output('page-content', 'children')
+        Output('page-content', 'children'),
+        Output('navbar_div', 'style'),
+        Output('sessionlogout', 'data'),
     ],
     [
-        Input('url', 'pathname')
+        Input('url', 'pathname'),
+    ],
+    [
+        State('sessionlogout', 'data'),
+        State('currentuserid', 'data'),
     ]
 )
-def displaypage (pathname):
+def displaypage(pathname, sessionlogout, currentuserid):
+    
+    
     ctx = dash.callback_context
     if ctx.triggered:
+       
         eventid = ctx.triggered[0]['prop_id'].split('.')[0]
     else:
         raise PreventUpdate
-
-    if eventid == 'url':
-        if pathname in ['/', '/home']:  
-                returnlayout = home.layout
-        elif pathname == '/transactions':
-                returnlayout = trans_home.layout
-        elif pathname == '/transactions/trans_new':
-                returnlayout = trans_new.layout
-        elif pathname == '/pets':
-                returnlayout = pets_home.layout
-        elif pathname == '/pets/pets_profile':
-                returnlayout = pets_profile.layout
-        elif pathname == '/owners':  
-                returnlayout = owners_home.layout
-        elif pathname == '/owners/owners_profile':  
-                returnlayout = owners_profile.layout
-        elif pathname == '/doctors':  
-                returnlayout = doctors_home.layout
-        elif pathname == '/doctors/doctor_profile':  
-                returnlayout = doctor_profile.layout
-        elif pathname == '/services':  
-                returnlayout = services_home.layout
-        elif pathname == '/services/services_profile':  
-                returnlayout = services_profile.layout
-        elif pathname == '/inventory':  
-                returnlayout = 'inventory_home.layout'
-        elif pathname == '/inventory/inventory_profile':  
-                returnlayout = 'inventory_profile.layout'
-        else:
-            raise PreventUpdate
     
-    return [returnlayout]
+    if eventid == 'url':
+        print(currentuserid, pathname)
+        if currentuserid < 0:
+            if pathname in ['/']:
+                returnlayout = login.layout
+            elif pathname == '/signup':
+                returnlayout = signup.layout
+            else:
+                returnlayout = '404: request not found'
+            
+        else:
+            if pathname == '/logout':
+                returnlayout = login.layout
+                sessionlogout = True
+                
+            elif pathname in ['/', '/home']:
+                returnlayout = home.layout
+                
+            elif pathname == '/transactions':
+                returnlayout = trans_home.layout
+            elif pathname == '/transactions/trans_new':
+                    returnlayout = trans_new.layout
+            elif pathname == '/pets':
+                    returnlayout = pets_home.layout
+            elif pathname == '/pets/pets_profile':
+                    returnlayout = pets_profile.layout
+            elif pathname == '/owners':  
+                    returnlayout = owners_home.layout
+            elif pathname == '/owners/owners_profile':  
+                    returnlayout = owners_profile.layout
+            elif pathname == '/doctors':  
+                    returnlayout = doctors_home.layout
+            elif pathname == '/doctors/doctor_profile':  
+                    returnlayout = doctor_profile.layout
+            elif pathname == '/services':  
+                    returnlayout = services_home.layout
+            elif pathname == '/services/services_profile':  
+                    returnlayout = services_profile.layout
+            elif pathname == '/inventory':  
+                    returnlayout = 'inventory_home.layout'
+            elif pathname == '/inventory/inventory_profile':  
+                    returnlayout = 'inventory_profile.layout'
+            else:
+                raise PreventUpdate
+    
+    navbar_div = {'display':  'none' if sessionlogout else 'unset'}
+    return [returnlayout, navbar_div, sessionlogout]
+
+
 
 if __name__ == '__main__':
     webbrowser.open('http://127.0.0.1:8050/', new=0, autoraise=True)
     app.run_server(debug=False)
-
-    
