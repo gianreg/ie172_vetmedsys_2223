@@ -29,8 +29,8 @@ layout = html.Div(
                                     [
                                         dbc.Label("Search Transaction Date", width=2),
                                         dbc.Col(
-                                            dcc.DatePickerSingle(
-                                                id='trans_date_filter',
+                                            dbc.Input(
+                                                type="date", id="trans_date", placeholder="Enter date"
                                             ),
                                             width=6,
                                         ),
@@ -61,7 +61,11 @@ layout = html.Div(
 def updateservicelist(pathname, searchterm):
     if pathname == '/transactions':
         sql = """select trans_date, pet_id, doctor_id, service_id, inv_id, inv_qty_used, trans_paid, trans_change
-            from transactions
+            from transactions t
+            inner join pets p on t.pet_id = p.pet_id
+            inner join doctors d on t.doctor_id = d.doctor_id
+            inner join services s on t.service_id = s.service_id
+            inner join inventory i on t.inv_id = t.inv_id
             where not trans_delete_ind
         """
         val = []

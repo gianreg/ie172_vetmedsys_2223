@@ -24,9 +24,12 @@ layout = html.Div(
         dbc.Row(
             [
                 dbc.Label("Transaction Date", width=2),
-                dbc.Col(
-                    dbc.Input(
-                        type="date", id="transnew_date", placeholder="Enter date"
+                dbc.Col(     
+                    html.Div(
+                        dcc.DatePickerSingle(
+                            id='transnew_date',
+                        ),
+                        className="dash-bootstrap"
                     ),
                     width=6,
                 ),
@@ -354,22 +357,8 @@ def transnew_submitprocess(
                 paid,
                 change
             ]
-            if not date:
-                feedbackmessage = "Please supply date."
-            elif not pet:
-                feedbackmessage = "Please supply pet."
-            elif not doctor:
-                feedbackmessage = "Please supply doctor."
-            elif not service:
-                feedbackmessage = "Please supply service."
-            elif not inv:
-                feedbackmessage = "Please supply inv item."
-            elif not qty:
-                feedbackmessage = "Please supply inv qty."
-            elif not paid:
-                feedbackmessage = "Please supply amount paid."
-            elif not change:
-                feedbackmessage = "Please supply change returned."
+            if not all(inputs):
+                feedbackmessage = "Please supply all inputs."
             else:
                 parsed = urlparse(search)
                 mode = parse_qs(parsed.query)['mode'][0]
