@@ -71,7 +71,7 @@ def updatetranslist(pathname, searchterm):
         val = []
         colnames = ['Date', 'Pet', 'Doctor-In-Charge','Service Availed','Inventory Used','Inventory Quantity Used','Amount Paid','Change', 'ID']
         if searchterm:
-            sql += "AND trans_date ILIKE %s"
+            sql += "AND CAST(trans_date AS text) ILIKE %s"
             val += [f"%{searchterm}%"]
         
         transactions = db.querydatafromdatabase(sql, val, colnames)
