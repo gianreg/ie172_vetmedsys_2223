@@ -11,27 +11,27 @@ from app import app
 
 layout = html.Div(
     [
-        html.H2("Doctors"),
+        html.H2("Inventory"),
         html.Hr(),
         dbc.Card(
             [
-                dbc.CardHeader(html.H4("Doctor Catalog")),
+                dbc.CardHeader(html.H4("Inventory Catalog")),
                 dbc.CardBody(
                     [ 
-                        dbc.Button("Add Veterinarian", color="secondary", href = '/doctors/doctor_profile?mode=add'),
+                        dbc.Button("Add Inventory Items", color="secondary", href = '/inventory/inventory_profile?mode=add'),
                         html.Hr(),
                         html.Div(
                             [
-                                html.H6("Find Doctor",style={'fontweight':'bold'}),
+                                html.H6("Find Inventory Item",style={'fontweight':'bold'}),
                                 html.Hr(),
                                 dbc.Row(
                                     [
-                                        dbc.Label("Search Doctor", width=2),
+                                        dbc.Label("Search Inventory", width=2),
                                         dbc.Col(
                                             dbc.Input(
                                                 type='text',
-                                                id='doctor_name_filter',
-                                                placeholder='Enter Doctor Name'
+                                                id='inv_name_filter',
+                                                placeholder='Enter Inventory Name'
                                             ),
                                             width=6,
                                         ),
@@ -39,8 +39,8 @@ layout = html.Div(
                                 className='mb-3',
                                 ),
                                 html.Div(
-                                    "This will contain the table for doctor catalog",
-                                    id="doctors_doctorslist"
+                                    "This will contain the table for inventory catalog",
+                                    id="inv_inventorylist"
                                 )
                             ]
                         )
@@ -53,46 +53,45 @@ layout = html.Div(
 
 @app.callback(
     [
-        Output('doctors_doctorslist', 'children')
+        Output('inv_inventorylist', 'children')
     ],
     [
         Input('url', 'pathname'),
-        Input('doctor_name_filter', 'value'),
+        Input('inv_name_filter', 'value'),
     ]
  )
-def doctorhome_loaddoctorlist(pathname, searchterm):
-    if pathname == '/doctors':
-        sql = """select doctor_name, doctor_specialty, doctor_id
-            from doctors
-            where not doctor_delete_ind
+def invhome_loadinventorylist(pathname, searchterm):
+    if pathname == '/inventory':
+        sql = """select inv_name, inv_qty, inv_id
+            from inventory
+            where not inv_delete_ind
         """
         values = []
-        colnames = ['Doctor Name', 'Specialty', 'ID']
+        colnames = ['Inventory Name', 'Quantity', 'ID']
 
         if searchterm:
-            sql += " AND doctor_name ILIKE %s"
+            sql += " AND inv_name ILIKE %s"
             values += [f"%{searchterm}%"]
 
-        doctors=db.querydatafromdatabase(sql,values,colnames)
+        inv=db.querydatafromdatabase(sql,values,colnames)
     
-        if doctors.shape:
+        if inv.shape:
             buttons = []
-            for doctor_id in doctors['ID']:
+            for inv_id in inv['ID']:
                 buttons += [
                 html.Div(
                     dbc.Button('Edit/Delete',
-                    href=f'doctors/doctor_profile?mode=edit&id={doctor_id}',
+                    href=f'inventory/inventory_profile?mode=edit&id={inv_id}',
                         size='sm', color='warning'),
                         style={'text-align': 'center'}
                 )   
             ]
 
-            doctors['Action'] = buttons
+            inv['Action'] = buttons
 
-            # remove the column ID before turning into a table 
 
-            doctors.drop('ID', axis=1, inplace=True)
-            table = dbc.Table.from_dataframe(doctors, striped=True, bordered=True,
+            inv.drop('ID', axis=1, inplace=True)
+            table = dbc.Table.from_dataframe(inv, striped=True, bordered=True,
             hover=True, size='sm')
 
             return [table]

@@ -16,7 +16,7 @@ from apps.transactions import trans_home, trans_new
 from apps.services import services_home, services_profile
 from apps.doctors import doctor_profile, doctors_home
 from apps import login, signup
-
+from apps.inventory import inventory_profile, inventory_home
 CONTENT_STYLE = {
     "margin-left": "1em",
     "margin-right": "1em",
@@ -113,9 +113,9 @@ def displaypage(pathname, sessionlogout, currentuserid):
             elif pathname == '/services/services_profile':  
                     returnlayout = services_profile.layout
             elif pathname == '/inventory':  
-                    returnlayout = 'inventory_home.layout'
+                    returnlayout = inventory_home.layout
             elif pathname == '/inventory/inventory_profile':  
-                    returnlayout = 'inventory_profile.layout'
+                    returnlayout = inventory_profile.layout
             else:
                 raise PreventUpdate
     
