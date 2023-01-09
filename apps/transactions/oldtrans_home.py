@@ -60,7 +60,7 @@ layout = html.Div(
  )
 def updatetranslist(pathname, searchterm):
     if pathname == '/transactions':
-        sql = """SELECT trans_date, p.pet_name, d.doctor_name, s.service_name, i.inv_name, inv_qty_used, trans_paid, trans_change, trans_id
+        sql = """SELECT trans_date, t.pet_id, t.doctor_id, t.service_id, t.inv_id, inv_qty_used, trans_paid, trans_change, trans_id
             from transactions t
             inner join pets p on t.pet_id = p.pet_id
             inner join doctors d on t.doctor_id = d.doctor_id
