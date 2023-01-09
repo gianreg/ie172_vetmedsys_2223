@@ -30,7 +30,7 @@ layout = html.Div(
                                         dbc.Label("Search Transaction Date", width=2),
                                         dbc.Col(
                                             dbc.Input(
-                                                type="date", id="trans_date", placeholder="Enter date"
+                                                type="date", id="trans_date_filter", placeholder="Enter date"
                                             ),
                                             width=6,
                                         ),
@@ -58,9 +58,9 @@ layout = html.Div(
         Input('trans_date_filter', 'value'),
     ]
  )
-def updateservicelist(pathname, searchterm):
+def updatetranslist(pathname, searchterm):
     if pathname == '/transactions':
-        sql = """select trans_date, pet_id, doctor_id, service_id, inv_id, inv_qty_used, trans_paid, trans_change
+        sql = """select trans_date, t.pet_id, t.doctor_id, t.service_id, t.inv_id, inv_qty_used, trans_paid, trans_change, trans_id
             from transactions t
             inner join pets p on t.pet_id = p.pet_id
             inner join doctors d on t.doctor_id = d.doctor_id
@@ -69,7 +69,7 @@ def updateservicelist(pathname, searchterm):
             where not trans_delete_ind
         """
         val = []
-        colnames = ['Date', 'Pet', 'Doctor-In-Charge','Service Availed','Inventory Used','Inventory Quantity Used','Amount Paid','Change']
+        colnames = ['Date', 'Pet', 'Doctor-In-Charge','Service Availed','Inventory Used','Inventory Quantity Used','Amount Paid','Change', 'ID']
         if searchterm:
             sql += "AND trans_date ILIKE %s"
             val += [f"%{searchterm}%"]
@@ -80,7 +80,7 @@ def updateservicelist(pathname, searchterm):
             for transid in transactions['ID']:
                 buttons += [
                     html.Div(
-                        dbc.Button('Edit/Delete', href=f"/services/services_profile?mode=edit&id={transid}",
+                        dbc.Button('Edit/Delete', href=f"/transactions/trans_new?mode=edit&id={transid}",
                                     size='sm', color='warning'),
                         style={'text-align': 'center'}
                     )

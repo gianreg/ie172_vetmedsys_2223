@@ -6,10 +6,10 @@ def getdblocation():
     db = psycopg2.connect(
  
         host='localhost',
-        database='172project',
+        database='172proj',
         user='postgres',
         port=5432,
-        password='apple'
+        password='7gh3mx25'
     )
 
     return db
