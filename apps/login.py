@@ -82,7 +82,7 @@ def loginprocess(loginbtn, username, password,
         if df.shape[0]: 
             currentuserid = df['userid'][0]
         else:
-            currentuserid = -1
+            currentuserid = None
             openalert = True
         
     else:
@@ -105,7 +105,7 @@ def loginprocess(loginbtn, username, password,
 def routelogin(logintime, userid):
     ctx = callback_context
     if ctx.triggered:
-        if userid > 0:
+        if userid:
             url = '/home'
         else:
             url = '/'

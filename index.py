@@ -35,7 +35,7 @@ app.layout = html.Div(
         dcc.Store(id='sessionlogout', data=False, storage_type='session'),
         
         
-        dcc.Store(id='currentuserid', data=-1, storage_type='session'),
+        dcc.Store(id='currentuserid', storage_type='session'),
         
         
         dcc.Store(id='currentrole', data=-1, storage_type='session'),
@@ -56,7 +56,7 @@ app.layout = html.Div(
     [
         Output('page-content', 'children'),
         Output('navbar_div', 'style'),
-        Output('sessionlogout', 'data'),
+        Output('currentuserid', 'clear_data'),
     ],
     [
         Input('url', 'pathname'),
@@ -77,8 +77,8 @@ def displaypage(pathname, sessionlogout, currentuserid):
         raise PreventUpdate
     
     if eventid == 'url':
-        print(currentuserid, pathname)
-        if currentuserid < 0:
+        print(currentuserid)
+        if not currentuserid:
             if pathname in ['/']:
                 returnlayout = login.layout
             elif pathname == '/signup':
@@ -123,7 +123,7 @@ def displaypage(pathname, sessionlogout, currentuserid):
             else:
                 raise PreventUpdate
     
-    navbar_div = {'display':  'none' if sessionlogout else 'unset'}
+    navbar_div = {'display': 'unset'}
     return [returnlayout, navbar_div, sessionlogout]
 
 
