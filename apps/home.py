@@ -16,9 +16,7 @@ layout = html.Div(
         html.Hr(),
         html.Div(
             [
-                html.Span("Thru this app, you can manage a vet med database."),
-                html.Br(),
-                html.Span("This page will contain the dashboard"),
+                html.Span("Manage a Vet-Med Database through this app."),
                 html.Br(),
                 html.Br(),
                 html.Span("Contact support if you need assistance!",
