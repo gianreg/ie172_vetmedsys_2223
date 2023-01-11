@@ -18,7 +18,7 @@ layout = html.Div(
                 dbc.CardHeader(html.H4("Inventory Catalog")),
                 dbc.CardBody(
                     [ 
-                        dbc.Button("Add Inventory Items", color="secondary", href = '/inventory/inventory_profile?mode=add'),
+                        dbc.Button("Add Inventory Items", color="primary", href = '/inventory/inventory_profile?mode=add'),
                         html.Hr(),
                         html.Div(
                             [

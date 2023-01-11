@@ -19,7 +19,7 @@ layout = html.Div(
                 dbc.CardHeader(html.H4("Transaction List")),
                 dbc.CardBody(
                     [
-                        dbc.Button("New Transaction", color="secondary", href = '/transactions/trans_new?mode=add'),
+                        dbc.Button("New Transaction", color="primary", href = '/transactions/trans_new?mode=add'),
                         html.Hr(),
                         html.Div(
                             [

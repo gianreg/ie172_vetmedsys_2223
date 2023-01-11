@@ -18,7 +18,7 @@ layout = html.Div(
                 dbc.CardHeader(html.H4("Pet Records")),
                 dbc.CardBody(
                     [
-                        dbc.Button("Add Pet", color="secondary", href = '/pets/pets_profile?mode=add'),
+                        dbc.Button("Add Pet", color="primary", href = '/pets/pets_profile?mode=add'),
                         html.Hr(),
                         html.Div(
                             [

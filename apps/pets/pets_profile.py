@@ -100,7 +100,7 @@ layout = html.Div(
             id = 'petprof_removerecord_div'
         ),
         html.Hr(),
-        dbc.Button('Submit', color="secondary", id='petprof_submitbtn', n_clicks=0),
+        dbc.Button('Submit', color="success", id='petprof_submitbtn', n_clicks=0),
         dbc.Modal(
             [
                 dbc.ModalHeader("Saving Progress"),

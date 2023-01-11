@@ -18,7 +18,7 @@ layout = html.Div(
                 dbc.CardHeader(html.H4("Owner Records")),
                 dbc.CardBody(
                     [
-                        dbc.Button("Add Owner", color="secondary", href = '/owners/owners_profile?mode=add'),
+                        dbc.Button("Add Owner", color="primary", href = '/owners/owners_profile?mode=add'),
                         html.Hr(),
                         html.Div(
                             [

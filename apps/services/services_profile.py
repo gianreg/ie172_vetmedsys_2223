@@ -80,7 +80,7 @@ layout = html.Div(
             id = 'serviceprof_removerecord_div'
         ),
         html.Hr(),
-        dbc.Button('Submit', color="secondary", id='serviceprof_submitbtn', n_clicks=0),
+        dbc.Button('Submit', color="success", id='serviceprof_submitbtn', n_clicks=0),
         dbc.Modal(
             [
                 dbc.ModalHeader("Saving Progress"),

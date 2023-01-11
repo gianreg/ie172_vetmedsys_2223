@@ -14,8 +14,8 @@ navlink_style = {
 navbar = dbc.Navbar(
     [
         html.A(
-            dbc.NavbarBrand("Vet Med System", className="ml-2", 
-            style={'margin-right': '2em'}),
+            dbc.NavbarBrand("VETS r US", className="ml-2", 
+            style={'margin-right': '2em','margin-left': '1em', 'font-size':'3em'}),
             href="/home",
         ),
         dbc.NavLink("Home", href="/home", style=navlink_style),
@@ -29,7 +29,7 @@ navbar = dbc.Navbar(
         dbc.NavLink("Logout", href="/logout", style=navlink_style),
     ],
     dark=True,
-    color='dark'
+    color='blue'
 )
 
 

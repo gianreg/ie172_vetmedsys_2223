@@ -18,7 +18,7 @@ layout = html.Div(
                 dbc.CardHeader(html.H4("Services Available")),
                 dbc.CardBody(
                     [
-                        dbc.Button("Add Service", color="secondary", href = '/services/services_profile?mode=add'),
+                        dbc.Button("Add Service", color="primary", href = '/services/services_profile?mode=add'),
                         html.Hr(),
                         html.Div(
                             [

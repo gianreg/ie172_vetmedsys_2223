@@ -12,11 +12,11 @@ from apps import dbconnect as db
 
 layout = html.Div(
     [
-        html.H2('Welcome to the Vet Med Database System!'),
+        html.H2('Home Dashboard'),
         html.Hr(),
         html.Div(
             [
-                html.Span("Manage a Vet-Med Database through this app."),
+                html.Span("View quick insights below."),
                 html.Br(),
                 html.Br(),
                 html.Span("Contact support if you need assistance!",

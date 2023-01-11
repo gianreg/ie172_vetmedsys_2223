@@ -51,7 +51,7 @@ layout = html.Div(
             ],
             className="mb-3",
         ),
-        dbc.Button('Sign up', color="secondary", id='singup_signupbtn'),
+        dbc.Button('Sign up', color="success", id='singup_signupbtn'),
         dbc.Modal(
             [
                 dbc.ModalHeader(dbc.ModalTitle("User Saved")),

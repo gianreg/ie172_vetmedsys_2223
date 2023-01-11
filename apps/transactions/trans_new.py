@@ -166,7 +166,7 @@ layout = html.Div(
             id = 'transnew_removerecord_div'
         ),
         html.Hr(),
-        dbc.Button('Submit', color="secondary", id='transnew_submitbtn', n_clicks=0),
+        dbc.Button('Submit', color="success", id='transnew_submitbtn', n_clicks=0),
         dbc.Modal(
             [
                 dbc.ModalHeader("Saving Progress"),

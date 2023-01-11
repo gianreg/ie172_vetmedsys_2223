@@ -38,7 +38,7 @@ layout = html.Div(
             ],
             className="mb-3",
         ),
-        dbc.Button('Login', color="secondary", id='login_loginbtn'),
+        dbc.Button('Login', color="success", id='login_loginbtn'),
         html.Hr(),
         html.A('Signup for New Users', href='/signup'),
     ]

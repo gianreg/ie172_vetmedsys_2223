@@ -68,7 +68,7 @@ layout = html.Div(
             id = 'invprof_removerecord_div'
         ),
         html.Hr(),
-        dbc.Button('Submit', color="secondary", id='invprof_submitbtn'),
+        dbc.Button('Submit', color="success", id='invprof_submitbtn'),
         dbc.Modal(
         [
             dbc.ModalHeader(dbc.ModalTitle("Saving Progress")),
