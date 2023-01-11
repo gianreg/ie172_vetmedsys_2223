@@ -35,7 +35,7 @@ app.layout = html.Div(
         dcc.Store(id='sessionlogout', data=False, storage_type='session'),
         
         
-        dcc.Store(id='currentuserid', storage_type='session'),
+        dcc.Store(id='currentuserid', data=0, storage_type='session'),
         
         
         dcc.Store(id='currentrole', data=-1, storage_type='session'),

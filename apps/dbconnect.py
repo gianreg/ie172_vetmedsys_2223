@@ -9,7 +9,7 @@ def getdblocation():
         database='172proj',
         user='postgres',
         port=5432,
-        password='7gh3mx25'
+        password='apple'
     )
 
     return db
