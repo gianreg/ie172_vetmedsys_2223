@@ -37,11 +37,11 @@ def home_loadreports(pathname):
         order by extract(month from trans_date) ASC
         """
         values = []
-        colnames = ["MM", "Month", "Sales"]
+        colnames = ["MM", "Month", "Transactions"]
 
         sales = db.querydatafromdatabase(sql,values,colnames)
 
-        sales_figure = px.bar(sales, x="Month", y="Sales", color="Month", barmode="group")
+        sales_figure = px.bar(sales, x="Month", y="Transactions", color="Month", barmode="group")
 
         return [sales_figure]
 
