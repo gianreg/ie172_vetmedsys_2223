@@ -8,7 +8,8 @@ import pandas as pd
 from app import app
 
 navlink_style = {
-    'color': '#fff'
+    'color': '#fff',
+    'margin-right': '1em'
 }
 navbar = dbc.Navbar(
     [
@@ -24,6 +25,7 @@ navbar = dbc.Navbar(
         dbc.NavLink("Doctors", href="/doctors", style=navlink_style),
         dbc.NavLink("Services", href="/services", style=navlink_style),
         dbc.NavLink("Inventory", href="/inventory", style=navlink_style),
+        dbc.NavLink("Reports", href="/reports", style=navlink_style),
         dbc.NavLink("Logout", href="/logout", style=navlink_style),
     ],
     dark=True,

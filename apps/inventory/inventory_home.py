@@ -74,7 +74,8 @@ def invhome_loadinventorylist(pathname, searchterm):
             values += [f"%{searchterm}%"]
 
         inv=db.querydatafromdatabase(sql,values,colnames)
-    
+        inv.loc[inv['Quantity'] == 0, 'Quantity'] = "Out of stock"
+        
         if inv.shape:
             buttons = []
             for inv_id in inv['ID']:

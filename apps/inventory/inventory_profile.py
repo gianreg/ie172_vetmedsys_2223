@@ -13,7 +13,7 @@ from apps import dbconnect as db
 
 layout = html.Div(
     [ 
-        html.Div( # This div shall contain all dcc.Store objects
+        html.Div( 
             [
                 dcc.Store(id='invprof_toload', storage_type='memory', data=0),
             ]
@@ -22,7 +22,7 @@ layout = html.Div(
         html.Hr(),
         dbc.Row(
             [
-                dbc.Label("Name", width=2),
+                dbc.Label("Inventory Name", width=2),
                 dbc.Col(
                     dbc.Input(
                         type="text", id="invprof_name", placeholder="Enter name"
@@ -181,7 +181,7 @@ def invprof_submitprocess(submitbtn, closebtn, name, quantity, search, removerec
                 sqlcode = """UPDATE inventory
                 SET
                     inv_name = %s,
-                    inv_quantity = %s,
+                    inv_qty = %s,
                     inv_delete_ind = %s
                 WHERE inv_id = %s
                 """
@@ -245,4 +245,4 @@ def invprofile_loadprofile(timestamp, toload, search):
         return [name, quantity]
  
     else:
-        raise 
+        raise PreventUpdate
