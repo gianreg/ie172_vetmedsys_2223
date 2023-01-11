@@ -106,7 +106,7 @@ layout = html.Div(
                 dbc.Label("Quantity Used", width=2),
                 dbc.Col(
                     dbc.Input(
-                        type="number", id="transnew_qtyused", placeholder=""
+                        type="number", id="transnew_qtyused", placeholder="", min=1
                     ),
                     width=2,
                 ),
@@ -115,28 +115,34 @@ layout = html.Div(
         ),
         dbc.Row(
             [
-                dbc.Label("Amount Paid", width=2),
+                dbc.Label("Service Price", width=2),
                 dbc.Col(
-                    dbc.Input(
-                        type="number", id="transnew_paid", placeholder="Enter amount paid"
-                    ),
+                    id='transnew_paid',
                     width=6,
                 ),
             ],
             className="mb-3",
         ),
-         dbc.Row(
+        dbc.Row(
             [
-                dbc.Label("Change", width=2),
+                dbc.Label("Payment Status", width=2),
                 dbc.Col(
-                    dbc.Input(
-                        type="number", id="transnew_change", placeholder="Enter change returned"
+                    html.Div(
+                        dcc.Dropdown(
+                            id='transnew_status',
+                            options=['Paid', 'Not Paid'],
+                            value=False,
+                            clearable=False,
+                            searchable=False,
+                        ),
+                        className="dash-bootstrap"
                     ),
-                    width=6,
+                    width=3,
                 ),
             ],
             className="mb-3",
-         ),
+        ),
+
         html.Div(
                 dbc.Row(
                 [
@@ -231,7 +237,7 @@ def transdoctordropdown(pathname):
 
 @app.callback(
     [
-        Output('transnew_service','options')
+        Output('transnew_service','options'),
     ],
     [
         Input('url','pathname')
@@ -256,6 +262,32 @@ def transservicedropdown(pathname):
 
 @app.callback(
     [
+        Output('transnew_paid','children'),
+    ],
+    [
+        Input('transnew_service','value')
+    ]
+)
+def transserviceprice(serviceid):
+    if serviceid:
+        sql = """
+        SELECT service_price as price
+        FROM services
+        WHERE service_id = %s
+        """
+        values = [serviceid]
+        cols = ['price']
+        df = db.querydatafromdatabase(sql, values, cols)
+
+        price = df['price'][0]
+
+        return [price]
+
+    else:
+        raise PreventUpdate
+
+@app.callback(
+    [
         Output('transnew_inv','options')
     ],
     [
@@ -267,7 +299,7 @@ def transinventorydropdown(pathname):
         sql = """
         SELECT inv_name as label, inv_id as value
         FROM inventory
-        WHERE inv_delete_ind = False
+        WHERE inv_delete_ind = False AND inv_qty > 0
         """
         values = []
         cols = ['label', 'value']
@@ -278,7 +310,6 @@ def transinventorydropdown(pathname):
 
     else:
         raise PreventUpdate
-
 
 @app.callback(
     [
@@ -326,15 +357,15 @@ def transnew_editprocess(pathname, search):
         State('transnew_service', 'value'),
         State('transnew_inv', 'value'),
         State('transnew_qtyused', 'value'),
-        State('transnew_paid', 'value'),
-        State('transnew_change', 'value'),
+        State('transnew_paid', 'children'),
+        State('transnew_status', 'value'),
         State('url', 'search'),
         State('transnew_removerecord', 'value')
     ]
 )
 
 def transnew_submitprocess(
-            submitbtn, closebtn,date, pet, doctor, service, inv, qty, paid, change, search, removerecord
+            submitbtn, closebtn,date, pet, doctor, service, inv, qty, paid, status, search, removerecord
                         ):
     ctx = dash.callback_context
     if ctx.triggered:
@@ -352,7 +383,7 @@ def transnew_submitprocess(
                 inv,
                 qty,
                 paid,
-                change
+                status
             ]
             if not date:
                 feedbackmessage = "Please supply date."
@@ -366,10 +397,10 @@ def transnew_submitprocess(
                 feedbackmessage = "Please supply inv item."
             elif not qty:
                 feedbackmessage = "Please supply inv qty."
-            elif not paid:
-                feedbackmessage = "Please supply amount paid."
-            elif not change:
-                feedbackmessage = "Please supply change returned."
+            # elif not paid:
+            #     feedbackmessage = "Please supply amount paid."
+            elif not status:
+                feedbackmessage = "Please supply payment status."
             else:
                 parsed = urlparse(search)
                 mode = parse_qs(parsed.query)['mode'][0]
@@ -382,20 +413,42 @@ def transnew_submitprocess(
                         inv_id,
                         inv_qty_used,
                         trans_paid,
-                        trans_change,
+                        trans_status,
                         trans_delete_ind
                     )
-                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);
+
+                    UPDATE inventory
+                    SET
+                        inv_qty = inv_qty - %s
+                    WHERE
+                        inventory.inv_id = %s;
                     """
-                    values = [date,pet,doctor,service,inv,qty,paid,change,False]
+                    values =[
+                        date,pet,doctor,service,inv,qty,paid,status,False,
+                        qty,inv
+                    ]
                     db.modifydatabase(sqlcode, values)
+                
                     feedbackmessage = "Transaction has been saved."
                     okay_href = '/transactions'
 
                 elif mode == 'edit':
                     parsed = urlparse(search)
                     transid = parse_qs(parsed.query)['id'][0]
-                    sqlcode = """UPDATE transactions
+
+                    to_delete = bool(removerecord)
+                    if(to_delete):
+                        qty = 0
+
+                    sqlcode = """
+                    UPDATE inventory
+                    SET 
+                        inv_qty = inv_qty - (%s - inv_qty_used)
+                    FROM transactions
+                    WHERE trans_id=%s and inventory.inv_id=%s;
+
+                    UPDATE transactions
                     SET
                         trans_date = %s,
                         pet_id = %s,
@@ -404,15 +457,16 @@ def transnew_submitprocess(
                         inv_id = %s,
                         inv_qty_used = %s,
                         trans_paid = %s,
-                        trans_change = %s,
+                        trans_status = %s,
                         trans_delete_ind = %s
                     WHERE
-                        trans_id = %s
+                        trans_id = %s;                
                     """
 
-                    to_delete = bool(removerecord)
-
-                    values = [date,pet,doctor,service,inv,qty,paid,change, to_delete, transid]
+                    values = [
+                        qty,transid,inv,
+                        date,pet,doctor,service,inv,qty,paid,status, to_delete, transid
+                        ]
                     db.modifydatabase(sqlcode, values)
                     feedbackmessage = "Transaction has been updated."
                     okay_href = '/transactions'
@@ -428,6 +482,9 @@ def transnew_submitprocess(
 
         return [openmodal, feedbackmessage, okay_href]
 
+    else:
+        raise PreventUpdate   
+        
 
 @app.callback(
     [
@@ -438,8 +495,7 @@ def transnew_submitprocess(
         Output('transnew_inv', 'value'),
         Output('transnew_qtyused', 'value'),
         Output('transnew_paid', 'value'),
-        Output('transnew_change', 'value'),
-
+        Output('transnew_status', 'value'),
     ],
     [
         Input('transnew_toload', 'modified_timestamp')
@@ -459,7 +515,7 @@ def loadtransdetails(timestamp, to_load, search):
                         inv_id,
                         inv_qty_used,
                         trans_paid,
-                        trans_change
+                        trans_status
         FROM transactions
         WHERE trans_id = %s
         """
@@ -468,7 +524,7 @@ def loadtransdetails(timestamp, to_load, search):
         transid = parse_qs(parsed.query)['id'][0]
 
         val = [transid]
-        colnames = ['Date', 'Pet', 'Doctor-In-Charge','Service Availed','Inventory Used','Inventory Quantity Used','Amount Paid','Change']
+        colnames = ['Date', 'Pet', 'Doctor-In-Charge','Service Availed','Inventory Used','Inventory Quantity Used','Amount Paid','Status']
 
         df = db.querydatafromdatabase(sql, val, colnames)
 
@@ -479,9 +535,9 @@ def loadtransdetails(timestamp, to_load, search):
         inv = df['Inventory Used'][0]
         qty = df['Inventory Quantity Used'][0]
         paid = df['Amount Paid'][0]
-        change = df['Change'][0]
+        status = df['Status'][0]
 
-        return [date,pet,doctor,service,inv,qty,paid,change]
+        return [date,pet,doctor,service,inv,qty,paid,status]
 
     else:
         raise PreventUpdate

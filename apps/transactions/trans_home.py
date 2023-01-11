@@ -60,15 +60,16 @@ layout = html.Div(
  )
 def updatetranslist(pathname, searchterm):
     if pathname == '/transactions':
-        sql = """SELECT trans_date, p.pet_name, d.doctor_name, s.service_name, i.inv_name, inv_qty_used, trans_paid, trans_change, trans_id
+        sql = """SELECT trans_date, p.pet_name, d.doctor_name, s.service_name, i.inv_name, inv_qty_used, trans_paid, trans_status, trans_id
             from transactions t
             inner join pets p on t.pet_id = p.pet_id
             inner join doctors d on t.doctor_id = d.doctor_id
             inner join services s on t.service_id = s.service_id
-            inner join inventory i on t.inv_id = t.inv_id
+            inner join inventory i on t.inv_id = i.inv_id
+            where not t.trans_delete_ind
         """
         val = []
-        colnames = ['Date', 'Pet', 'Doctor-In-Charge','Service Availed','Inventory Used','Inventory Quantity Used','Amount Paid','Change', 'ID']
+        colnames = ['Date', 'Pet', 'Doctor-In-Charge','Service Availed','Inventory Used','Inventory Quantity Used','Amount Paid','Status', 'ID']
         if searchterm:
             sql += "AND CAST(trans_date AS text) ILIKE %s"
             val += [f"%{searchterm}%"]
