@@ -38,6 +38,20 @@ layout = html.Div(
                                     ],
                                 className='mb-3',
                                 ),
+                                dbc.Row(
+                                    [
+                                        dbc.Label("Search Owner", width=2),
+                                        dbc.Col(
+                                            dbc.Input(
+                                                type='text',
+                                                id='owner_name_filter',
+                                                placeholder='Enter Owner Name'
+                                            ),
+                                            width=6,
+                                        ),
+                                    ],
+                                className='mb-3',
+                                ),
                                 html.Div(
                                     "This will contain the table for pet records",
                                     id="pet_petlist"
@@ -50,6 +64,7 @@ layout = html.Div(
         )
     ]
 )
+
 @app.callback(
     [
         Output('pet_petlist', 'children')
@@ -57,9 +72,10 @@ layout = html.Div(
     [
         Input('url', 'pathname'),
         Input('pet_name_filter', 'value'),
+        Input('owner_name_filter', 'value')
     ]
  )
-def updatepetlist(pathname, searchterm):
+def updatepetlist(pathname, pet_name_searchterm, owner_name_searchterm):
     if pathname == '/pets':
         sql = """select pet_name, owner_name, pet_type, pet_dob, pet_id
             from pets p 
@@ -68,9 +84,12 @@ def updatepetlist(pathname, searchterm):
         """
         val = []
         colnames = ['Pet Name', 'Owner', 'Type', 'Date of Birth', 'ID']
-        if searchterm:
+        if pet_name_searchterm:
             sql += "AND pet_name ILIKE %s"
-            val += [f"%{searchterm}%"]
+            val += [f"%{pet_name_searchterm}%"]
+        if owner_name_searchterm:
+            sql += "AND owner_name ILIKE %s"
+            val += [f"%{owner_name_searchterm}%"]
         
         pets = db.querydatafromdatabase(sql, val, colnames)
         if pets.shape[0]:
@@ -94,5 +113,4 @@ def updatepetlist(pathname, searchterm):
             return ["There are no records that match the search term."]
     
     else:
-        raise PreventUpdate
-                            
+        raise 
